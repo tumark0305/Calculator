@@ -15,12 +15,8 @@ from tqdm import trange
 LabelBase.register(name='chinese', fn_regular='C:\\Windows\\Fonts\\msjh.ttc')
 
 class MatrixIterationVisualize(App):
-    def __init__(self , matrix_list, data_pack , **kwargs):
+    def __init__(self , **kwargs):
         super().__init__(**kwargs)
-        self.mat_list = matrix_list
-        self.data_pack = data_pack
-        self.matrix = self.mat_list[0]
-        self.col, self.row = self.matrix.shape
         self.cell_width = 60   # 每格大概 6 字元寬
         self.cell_height = 40  # 每格高度
         self.font_size = 24
