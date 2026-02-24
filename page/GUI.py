@@ -6,8 +6,36 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 lable_hight = 40
-total_col = 5
+total_col = 7
 Window.size = (300, lable_hight*total_col)
+
+class param_frame:
+    counter = 0
+    data = []
+    update_order =[]
+    everything = []
+    def __init__(self,_name):
+        self.id = param_frame.counter
+        param_frame.everything.append(self)
+        param_frame.counter += 1
+        param_frame.data = list(range(param_frame.counter))
+        param_frame.update_order = list(range(param_frame.counter))
+        self.row = BoxLayout(
+            orientation="horizontal",
+            spacing=10,
+            size_hint_y=None,
+            height=lable_hight  
+        )
+        self.label = Label(text=_name, size_hint_x=0.3)
+        self.input_box = LabelLikeInput(text="input here")
+        self.input_box.bind(text=self.update)
+        self.row.add_widget(self.label)
+        self.row.add_widget(self.input_box)
+    def update(self , instance ,value):
+        param_frame.update_order = [_x + 1 for _x in param_frame.update_order]
+        param_frame.update_order[self.id] = 0
+        param_frame.data[self.id] = value
+        print(f"id={self.id}")
 
 class LabelLikeInput(TextInput):
     def __init__(self, **kwargs):
@@ -22,31 +50,9 @@ class LabelLikeInput(TextInput):
 
 
 class DemoApp(App):
-    class param_manager:
-        counter = 0
-        data = []
-        update_order =[]
+    class param_manager(param_frame):
         def __init__(self,_name="param0"):
-            self.id = DemoApp.param_manager.counter
-            DemoApp.param_manager.counter += 1
-            DemoApp.param_manager.data = list(range(DemoApp.param_manager.counter))
-            DemoApp.param_manager.update_order = list(range(DemoApp.param_manager.counter))
-            self.row = BoxLayout(
-                orientation="horizontal",
-                spacing=10,
-                size_hint_y=None,
-                height=lable_hight  
-            )
-            self.label = Label(text=_name, size_hint_x=0.3)
-            self.input_box = LabelLikeInput(text="input here")
-            self.input_box.bind(text=self.update)
-            self.row.add_widget(self.label)
-            self.row.add_widget(self.input_box)
-            return None
-        def update(self , instance ,value):
-            DemoApp.param_manager.update_order[self.id] = 0
-            DemoApp.param_manager.data[self.id] = value
-            return None
+            super().__init__(_name)
     def build(self):
         root = BoxLayout(orientation="vertical", padding=10, spacing=10)
 
@@ -66,6 +72,9 @@ class DemoApp(App):
         param3 = self.param_manager("param3")
         root.add_widget(self.display_label)
         root.add_widget(param0.row)
+        root.add_widget(param1.row)
+        root.add_widget(param2.row)
+        root.add_widget(param3.row)
         root.add_widget(btn)
         return root
 
