@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>c616b37d-8aaf-4c52-bc24-374fa2a995d0</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>page\GUI.py</StartupFile>
+    <StartupFile>Page\RC_filter.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -29,6 +29,7 @@
     <Compile Include="Page\RC_filter.py" />
     <Compile Include="page\RLC_parallel.py" />
     <Compile Include="page\RLC_series.py" />
+    <Compile Include="Page\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="CondaEnv|CondaEnv|py311" />
