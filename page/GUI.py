@@ -17,7 +17,7 @@ class param_frame:
     update_order =[]
     everything = []
     ALL_EXP = [("G",1e9),("M",1e6),("k",1e3),("Empty",1.0),("m",1e-3),("u",1e-6),("n",1e-9),("p",1e-12),("f",1e-15)]
-    def __init__(self,_name,_input,_exp):
+    def __init__(self,_name,_input,_exp,_func):
         self.id = param_frame.counter
         param_frame.everything.append(self)
         param_frame.counter += 1
@@ -28,7 +28,8 @@ class param_frame:
             size_hint_y=None,
             height=lable_hight  
         )
-        self.data = ""
+        self.func = _func
+        self.data = _input
         self.exp = 0
         self.label = Label(text=_name, size_hint_x=0.3)
         self.input_box = LabelLikeInput(text=_input)
@@ -53,8 +54,13 @@ class param_frame:
         param_frame.update_order = self.reordering()
         self.data = value
         _update_id = param_frame.update_order.index(param_frame.counter - 1)
+        _unpack = []
+        for _x in range(len(param_frame.update_order)):
+            if _x != _update_id:
+                _unpack.append(param_frame.everything[_x].data)
+        _output = str(self.func(_unpack))
         param_frame.everything[_update_id]._internal_set = True
-        param_frame.everything[_update_id].input_box.text ="output"
+        param_frame.everything[_update_id].input_box.text =_output
         param_frame.everything[_update_id]._internal_set = False
 
     def reordering(self):
@@ -87,11 +93,11 @@ class LabelLikeInput(TextInput):
 
 class GUI_frame(BoxLayout):
     class param_manager(param_frame):
-        def __init__(self,_name="param0",_input="0",_exp="Empty"):
-            super().__init__(_name,_input,_exp)
-    def __init__(self,**kwargs):
+        def __init__(self,_name,_input,_exp,_func):
+            super().__init__(_name,_input,_exp,_func)
+    def __init__(self,_functions,**kwargs):
         super().__init__(orientation="vertical", padding=10, spacing=10, **kwargs)
-
+        self.functions = _functions
         self.display_label = Label(
             text="update now",
             size_hint_y=None,
@@ -101,19 +107,34 @@ class GUI_frame(BoxLayout):
         close_btn = Button(text="Exit",
             size_hint_y=None,
             height=lable_hight)
-        param0 = self.param_manager("param0","0","Empty")
-        param1 = self.param_manager("param1","1","Empty")
-        param2 = self.param_manager("param2","2","Empty")
-        param3 = self.param_manager("param3","3","Empty")
+        params = []
+        params.append(self.param_manager("param0","0","Empty",self.functions[0]))
+        params.append(self.param_manager("param1","1","Empty",self.functions[1]))
+        params.append(self.param_manager("param2","2","Empty",self.functions[2]))
+        params.append(self.param_manager("param3","3","Empty",self.functions[3]))
+        if len(params) != total_col:
+            raise BufferError("params != total_col !")
         self.add_widget(self.display_label)
-        self.add_widget(param0.row)
-        self.add_widget(param1.row)
-        self.add_widget(param2.row)
-        self.add_widget(param3.row)
+        [self.add_widget(_x.row) for _x in params]
         self.add_widget(close_btn)
         self.close_btn = close_btn
 
-
+def test_calculator():
+    def add(_data_pack):#str in and out
+        _data  = []
+        for _x in _data_pack:
+            try:
+                _data.append(float(_x))
+            except Exception as e:
+                return e
+        x,y,z = _data
+        return str(x+y+z)
+    _output = []
+    _output.append(add)
+    _output.append(add)
+    _output.append(add)
+    _output.append(add)
+    return _output
 class TestApp(App):
     def build(self):
         root = BoxLayout(padding=10)
@@ -122,7 +143,7 @@ class TestApp(App):
         root.add_widget(btn)
         return root
     def open_param_window(self, *_):
-        panel = GUI_frame()
+        panel = GUI_frame(test_calculator())
         pop = Popup(
             title="Parameters",
             content=panel,
@@ -133,7 +154,6 @@ class TestApp(App):
         panel.close_btn.bind(on_press=lambda *_: pop.dismiss())
         pop.open()
 
-    open_param_window = open_param_window
 
 if __name__ == "__main__":
     TestApp().run()
