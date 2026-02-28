@@ -9,7 +9,7 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.popup import Popup
 import os
 lable_hight = 40
-ADDICTIONAL_COL = 6
+ADDICTIONAL_COL = 7
 total_col = 4
 Window.size = (450, lable_hight*(total_col+ADDICTIONAL_COL))
 ALL_EXP = [("G",1e9),("M",1e6),("k",1e3),("Empty",1.0),("m",1e-3),("u",1e-6),("n",1e-9),("p",1e-12),("f",1e-15)]
@@ -196,7 +196,7 @@ class GUI_frame(BoxLayout):
             size_hint_y=None,
             height=lable_hight
         )
-        close_btn = Button(text="Exit",
+        _close_btn = Button(text="Exit",
             size_hint_y=None,
             height=lable_hight)
         self.params = []
@@ -214,13 +214,30 @@ class GUI_frame(BoxLayout):
             _new.convert_cal_input()
         self.add_widget(self.display_label)
         [self.add_widget(_x.row) for _x in self.params]
-        self.add_widget(close_btn)
-        self.close_btn = close_btn
+        self.add_widget(self.playback_row())
+        self.add_widget(_close_btn)
+        self.close_btn = _close_btn
     def delete(self):
         [_x.delete() for _x in self.params]
         self.popup_id = "deleted"
         GUI_frame.everything.remove(self)
         return None
+    def playback_row(self):
+        _row = BoxLayout(
+            orientation="horizontal",
+            spacing=10,
+            size_hint_y=None,
+            height=lable_hight  
+        )
+        _left_btn = Button(text="<--",
+            size_hint_y=None,
+            height=lable_hight)
+        _right_btn = Button(text="-->",
+            size_hint_y=None,
+            height=lable_hight)
+        _row.add_widget(_left_btn)
+        _row.add_widget(_right_btn)
+        return _row
 class test_model:
     def __init__(self):
         self.variables = ['Va','Vb','Vc','Vd','Ve']
