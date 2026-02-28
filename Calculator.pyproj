@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>c616b37d-8aaf-4c52-bc24-374fa2a995d0</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Page\RC_filter.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
