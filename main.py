@@ -12,8 +12,8 @@ class TestApp(App):
     def build(self):
         root = BoxLayout(orientation="vertical", padding=10, spacing=10)
         self.opened = {}   # kind -> Popup
-        _all_calualotor = [RC_filter_model(),RLC_lowpass_model(),RLC_highpass_model()]
-
+        #_all_calualotor = [RC_filter_model(),RLC_series_resnoate_model(),RLC_lowpass_model(),RLC_highpass_model()]
+        _all_calualotor = [RC_filter_model(False)]
         [root.add_widget(self.new_button(_calualotor)) for _calualotor in _all_calualotor]
         return root
     def open_window(self, kind, *_):
@@ -46,13 +46,7 @@ class TestApp(App):
         if _model in self.opened:
             return
 
-        panel = GUI_frame(
-            _model.title,
-            _model.variables,
-            _model.units,
-            _model.functions
-        )
-
+        panel = GUI_frame(_model)
         pop = Popup(
             title=_model.title,
             content=panel,

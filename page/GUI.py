@@ -7,11 +7,14 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.spinner import Spinner
 from kivy.uix.popup import Popup
+from kivy.uix.image import Image
+from kivy.graphics.texture import Texture
+from kivy.clock import Clock
 import os
 lable_hight = 40
 ADDICTIONAL_COL = 7
 total_col = 4
-Window.size = (450, lable_hight*(total_col+ADDICTIONAL_COL))
+Window.size = (500, lable_hight*(total_col+ADDICTIONAL_COL))
 ALL_EXP = [("G",1e9),("M",1e6),("k",1e3),("Empty",1.0),("m",1e-3),("u",1e-6),("n",1e-9),("p",1e-12),("f",1e-15)]
 
 class Cache_frame:
@@ -182,17 +185,18 @@ class GUI_frame(BoxLayout):
     class param_manager(param_frame):
         def __init__(self,_popup_id,_name,_input,_exp,_unit,_func,_cache):
             super().__init__(_popup_id,_name,_input,_exp,_unit,_func,_cache)
-    def __init__(self,_func_name,_var_names,_var_units,_functions,**kwargs):
+    def __init__(self,_model,**kwargs):
         super().__init__(orientation="vertical", padding=10, spacing=10, **kwargs)
         self.popup_id = GUI_frame.counter
         GUI_frame.everything.append(self)
         GUI_frame.counter += 1
-        self.var_names = _var_names
-        self.var_units = _var_units
-        self.cache = self.Cache(self.popup_id,_func_name)
-        self.functions = _functions
+        self.model = _model
+        self.var_names = _model.variables
+        self.var_units = _model.units
+        self.cache = self.Cache(self.popup_id,_model.title)
+        self.functions = _model.functions
         self.display_label = Label(
-            text=_func_name,
+            text=_model.title,
             size_hint_y=None,
             height=lable_hight
         )
@@ -213,6 +217,19 @@ class GUI_frame(BoxLayout):
                 _new.update_order[self.popup_id] = _load_order
             _new.convert_cal_input()
         self.add_widget(self.display_label)
+        if self.model.do_gen_image:
+            rgba = self.model.image
+            size = self.model.image_size  # (w, 80)
+
+            tex = Texture.create(size=size, colorfmt="rgba")
+            tex.blit_buffer(rgba, colorfmt="rgba", bufferfmt="ubyte")
+            tex.flip_vertical()
+
+            self.formula_img = Image(texture=tex)
+            self.formula_img.size_hint = (None, None)
+            self.formula_img.size = size  
+        
+            self.add_widget(self.formula_img)
         [self.add_widget(_x.row) for _x in self.params]
         self.add_widget(self.playback_row())
         self.add_widget(_close_btn)
@@ -238,6 +255,20 @@ class GUI_frame(BoxLayout):
         _row.add_widget(_left_btn)
         _row.add_widget(_right_btn)
         return _row
+    def _apply_formula_texture(self, dt):
+        rgba = self.model.image
+        size = self.model.image_size
+
+        tex = Texture.create(size=size, colorfmt="rgba")
+        tex.blit_buffer(rgba, colorfmt="rgba", bufferfmt="ubyte")
+        tex.flip_vertical()
+
+        self.formula_img.texture = tex
+
+        # 關鍵：讓 Image 有尺寸（避免被 layout 壓扁看不到）
+        self.formula_img.size_hint = (None, None)
+        self.formula_img.size = tex.size
+        self.formula_img.canvas.ask_update()
 class test_model:
     def __init__(self):
         self.variables = ['Va','Vb','Vc','Vd','Ve']
