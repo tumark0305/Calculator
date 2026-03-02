@@ -1,8 +1,8 @@
 import math
 
-class RC_filter_model:
+class RLC_lowpass_model:
     def __init__(self):
-        self.title = "RC_filter"
+        self.title = "RLC_lowpass"
         self.variables = ['R','C','freq']
         self.units = ['ohm','F','Hz']
         self.functions = self.func()
@@ -25,8 +25,3 @@ class RC_filter_model:
         _output.append(add)
         _output.append(add)
         return _output
-
-
-
-
-

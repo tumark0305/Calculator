@@ -27,8 +27,9 @@
     <Compile Include="page\GUI.py" />
     <Compile Include="page\lobby.py" />
     <Compile Include="Page\RC_filter.py" />
-    <Compile Include="page\RLC_parallel.py" />
-    <Compile Include="page\RLC_series.py" />
+    <Compile Include="Page\RLC_highpass.py" />
+    <Compile Include="Page\RLC_lowpass.py" />
+    <Compile Include="Page\RLC_series_resnoate.py" />
     <Compile Include="Page\__init__.py" />
   </ItemGroup>
   <ItemGroup>
